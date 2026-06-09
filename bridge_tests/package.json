@@ -8,7 +8,7 @@
     "test:regression": "playwright test --grep @regression",
     "test:a11y": "playwright test --grep @accessibility",
     "test:headed": "playwright test --headed",
-    "test:ui": "playwright test --ui",
+    "test:ui": "playwright test --ui --ui-port=8080",
     "test:debug": "playwright test --debug",
     "test:prod": "BASE_URL=https://bridge.stitiousproductions.com playwright test --project=chromium --grep-invert @auth",
     "test:auth": "USE_REAL_SUPABASE=1 playwright test tests/e2e/auth.spec.ts --project=chromium",
