@@ -17,7 +17,6 @@ npm run test:smoke       # fastest pass/fail signal (~15s)
 npm run test:regression  # full workflow coverage
 npm run test:a11y        # axe scans + ARIA assertions
 npm run test:ui          # interactive Playwright UI — opens in your browser on port 8080
-npm run test:headed      # run with a visible browser (via Xvfb virtual display)
 ```
 
 ---
