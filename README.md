@@ -10,14 +10,14 @@ Click the button below to launch a fully configured environment in your browser 
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/bamidon/bobb-amidon-qa-engineer)
 
-Once the terminal is ready, open the **Testing** panel in VS Code (flask icon in the sidebar) or run:
+Once the terminal is ready, open the **Testing** panel in VS Code (flask icon in the sidebar) or run from the repo root:
 
 ```bash
-cd bridge_tests
-npm run test:ui      # interactive Playwright UI — pick tests, watch them run
-npm run test:smoke   # fastest pass/fail signal (~15s)
+npm run test:smoke       # fastest pass/fail signal (~15s)
 npm run test:regression  # full workflow coverage
-npm run test:a11y    # axe scans + ARIA assertions
+npm run test:a11y        # axe scans + ARIA assertions
+npm run test:ui          # interactive Playwright UI — opens in your browser on port 8080
+npm run test:headed      # run with a visible browser (via Xvfb virtual display)
 ```
 
 ---
@@ -66,6 +66,6 @@ bridge_tests/    Playwright test framework
 npm run test:smoke       # @smoke
 npm run test:regression  # @regression
 npm run test:a11y        # @accessibility
-npm run test:auth        # @auth (requires real Supabase credentials — see bridge_tests/.env.example)
+npm run test:auth        # @auth (Supabase credentials pre-configured in Codespaces)
 npm run test:prod        # runs against https://bridge.stitiousproductions.com
 ```
