@@ -1,0 +1,29 @@
+{
+  "name": "bridge-tests",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:regression": "playwright test --grep @regression",
+    "test:a11y": "playwright test --grep @accessibility",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:prod": "BASE_URL=https://bridge.stitiousproductions.com playwright test --project=chromium --grep-invert @auth",
+    "test:auth": "USE_REAL_SUPABASE=1 playwright test tests/e2e/auth.spec.ts --project=chromium",
+    "report": "playwright show-report",
+    "runner": "node runner.js",
+    "demo": "concurrently -n \"app,tests\" -c \"blue,magenta\" \"npm --prefix ../bridge_app run dev\" \"node runner.js\""
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.9.1",
+    "@playwright/test": "^1.44.1",
+    "@supabase/supabase-js": "^2.107.0",
+    "@types/node": "^25.9.1",
+    "concurrently": "^10.0.3"
+  }
+}

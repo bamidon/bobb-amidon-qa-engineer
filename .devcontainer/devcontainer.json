@@ -1,0 +1,27 @@
+{
+  "name": "Bobb Amidon — QA Engineer",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "postCreateCommand": "npm install --prefix bridge_app && npm install --prefix bridge_tests && npx --prefix bridge_tests playwright install chromium --with-deps",
+  "forwardPorts": [5173, 4000],
+  "portsAttributes": {
+    "5173": { "label": "Bridge App (Vite)" },
+    "4000": { "label": "Test Lab" }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-playwright.playwright",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss"
+      ],
+      "settings": {
+        "playwright.reuseBrowser": false,
+        "playwright.showTrace": true
+      }
+    }
+  }
+}

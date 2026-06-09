@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bridge — Test Lab</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(160deg, #e8f4fd 0%, #ede7f6 50%, #fce4ec 100%);
+      background-attachment: fixed;
+      padding: 24px 16px 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Header ──────────────────────────────────────────────── */
+    .header {
+      width: 100%;
+      max-width: 680px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 32px;
+      padding-top: 24px;
+    }
+
+    .back-link {
+      font-size: 0.8125rem;
+      color: #6b52ae;
+      text-decoration: none;
+      padding: 4px 10px;
+      border-radius: 8px;
+      transition: background 150ms;
+    }
+    .back-link:hover { background: rgba(107,82,174,0.08); }
+
+    .header-title {
+      flex: 1;
+      text-align: center;
+    }
+    .header-title h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #6b52ae;
+      letter-spacing: -0.02em;
+    }
+    .header-title p {
+      font-size: 0.75rem;
+      color: #9ca3af;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-top: 2px;
+    }
+
+    /* spacer to balance the back link */
+    .header-spacer { width: 64px; }
+
+    /* ── Headed toggle ───────────────────────────────────────── */
+    .mode-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #4a5568;
+      cursor: pointer;
+      user-select: none;
+    }
+    .mode-toggle input { display: none; }
+
+    .toggle-track {
+      width: 40px;
+      height: 22px;
+      border-radius: 11px;
+      background: rgba(107,82,174,0.15);
+      position: relative;
+      transition: background 200ms;
+      flex-shrink: 0;
+    }
+    .toggle-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #9ca3af;
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      transition: transform 200ms, background 200ms;
+    }
+    .mode-toggle input:checked ~ .toggle-track { background: rgba(107,82,174,0.3); }
+    .mode-toggle input:checked ~ .toggle-track .toggle-thumb {
+      transform: translateX(18px);
+      background: #6b52ae;
+    }
+    .mode-label { color: #4a5568; }
+
+    /* ── Cards ───────────────────────────────────────────────── */
+    .card {
+      width: 100%;
+      max-width: 680px;
+      background: rgba(255,255,255,0.82);
+      border: 1px solid rgba(255,255,255,0.6);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 8px 32px rgba(100,80,150,0.1), 0 2px 8px rgba(0,0,0,0.04);
+      margin-bottom: 16px;
+    }
+
+    /* ── Controls ────────────────────────────────────────────── */
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .run-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 12px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 150ms;
+      font-family: inherit;
+    }
+    .run-btn:focus-visible { outline: 2px solid #6b52ae; outline-offset: 2px; }
+    .run-btn:active { transform: scale(0.97); }
+    .run-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .run-btn-primary {
+      background: #6b52ae;
+      color: #fff;
+    }
+    .run-btn-primary:not(:disabled):hover { background: #5a4396; transform: translateY(-1px); }
+
+    .run-btn-tag {
+      background: rgba(107,82,174,0.1);
+      color: #5a4396;
+    }
+    .run-btn-tag:not(:disabled):hover { background: rgba(107,82,174,0.18); transform: translateY(-1px); }
+    .run-btn-tag.active { background: #6b52ae; color: #fff; }
+
+    .controls-spacer { flex: 1; }
+
+    /* ── Stats ───────────────────────────────────────────────── */
+    .stats {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+    .stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 48px;
+    }
+    .stat-value {
+      font-size: 1.375rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 2px;
+    }
+    .stat-passed .stat-value { color: #2f855a; }
+    .stat-passed .stat-label { color: #48bb78; }
+    .stat-failed .stat-value { color: #c53030; }
+    .stat-failed .stat-label { color: #fc8181; }
+    .stat-total .stat-value { color: #4a5568; }
+    .stat-total .stat-label { color: #9ca3af; }
+
+    /* ── Progress bar ────────────────────────────────────────── */
+    .progress-wrap {
+      margin-top: 16px;
+      height: 5px;
+      background: rgba(107,82,174,0.1);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #6b52ae, #5b9bd5);
+      border-radius: 3px;
+      transition: width 300ms ease;
+      width: 0%;
+    }
+
+    /* ── Status banner ───────────────────────────────────────── */
+    .status-banner {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #6b7280;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 24px;
+    }
+
+    .spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(107,82,174,0.2);
+      border-top-color: #6b52ae;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    .running .spinner { display: block; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Results list ────────────────────────────────────────── */
+    .results-wrap {
+      max-height: 420px;
+      overflow-y: auto;
+      border-radius: 12px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(107,82,174,0.2) transparent;
+    }
+    .results-wrap::-webkit-scrollbar { width: 4px; }
+    .results-wrap::-webkit-scrollbar-thumb { background: rgba(107,82,174,0.2); border-radius: 2px; }
+
+    .results-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .result-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 10px;
+      animation: slideIn 200ms ease;
+      background: rgba(255,255,255,0.5);
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-icon {
+      font-size: 0.875rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+      width: 16px;
+      text-align: center;
+    }
+    .result-item.passed .result-icon { color: #2f855a; }
+    .result-item.failed .result-icon { color: #c53030; }
+    .result-item.skipped .result-icon { color: #9ca3af; }
+
+    .result-body { flex: 1; min-width: 0; }
+
+    .result-suite {
+      font-size: 0.6875rem;
+      color: #9ca3af;
+      font-weight: 500;
+      margin-bottom: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .result-title {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #2d3748;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .result-item.failed .result-title { color: #c53030; }
+
+    .result-error {
+      font-size: 0.6875rem;
+      color: #e53e3e;
+      margin-top: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .result-duration {
+      font-size: 0.6875rem;
+      color: #9ca3af;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: #9ca3af;
+      font-size: 0.9375rem;
+    }
+    .empty-state span { display: block; font-size: 2.5rem; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <a class="back-link" href="http://localhost:5173">← Bridge</a>
+  <div class="header-title">
+    <h1>Test Lab</h1>
+    <p>Playwright · Chromium</p>
+  </div>
+  <div class="header-spacer"></div>
+</div>
+
+<!-- Controls card -->
+<div class="card">
+  <div class="controls">
+    <button class="run-btn run-btn-primary" onclick="run()" id="btn-all">▶ Run All</button>
+    <button class="run-btn run-btn-tag" onclick="run('@smoke')" id="btn-smoke">@smoke</button>
+    <button class="run-btn run-btn-tag" onclick="run('@regression')" id="btn-regression">@regression</button>
+    <button class="run-btn run-btn-tag" onclick="run('@accessibility')" id="btn-a11y">@accessibility</button>
+    <div class="controls-spacer"></div>
+    <label class="mode-toggle" title="Show browser window while tests run">
+      <input type="checkbox" id="headed-toggle" />
+      <div class="toggle-track"><div class="toggle-thumb"></div></div>
+      <span class="mode-label">Headed</span>
+    </label>
+    <div class="stats">
+      <div class="stat stat-passed">
+        <span class="stat-value" id="stat-passed">—</span>
+        <span class="stat-label">passed</span>
+      </div>
+      <div class="stat stat-failed">
+        <span class="stat-value" id="stat-failed">—</span>
+        <span class="stat-label">failed</span>
+      </div>
+      <div class="stat stat-total">
+        <span class="stat-value" id="stat-total">—</span>
+        <span class="stat-label">total</span>
+      </div>
+    </div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-fill" id="progress"></div>
+  </div>
+</div>
+
+<!-- Results card -->
+<div class="card">
+  <div class="status-banner" id="status-banner">
+    <div class="spinner" id="spinner"></div>
+    <span id="status-text">Select a suite above to run tests</span>
+  </div>
+  <div class="results-wrap" id="results-wrap">
+    <ul class="results-list" id="results-list"></ul>
+    <div class="empty-state" id="empty-state">
+      <span>🧪</span>
+      Press a button to run tests and see live results
+    </div>
+  </div>
+</div>
+
+<script>
+  let es = null;
+  let total = 0;
+  let completed = 0;
+
+  const buttons = ['btn-all', 'btn-smoke', 'btn-regression', 'btn-a11y'];
+
+  function setButtonsDisabled(disabled) {
+    buttons.forEach(id => {
+      document.getElementById(id).disabled = disabled;
+    });
+  }
+
+  function setActiveTag(tag) {
+    buttons.forEach(id => document.getElementById(id).classList.remove('active'));
+    const map = { '': 'btn-all', '@smoke': 'btn-smoke', '@regression': 'btn-regression', '@accessibility': 'btn-a11y' };
+    const id = map[tag];
+    if (id) document.getElementById(id).classList.add('active');
+  }
+
+  function setStatus(text, running = false) {
+    document.getElementById('status-text').textContent = text;
+    document.getElementById('status-banner').className = `status-banner${running ? ' running' : ''}`;
+  }
+
+  function updateProgress() {
+    const pct = total > 0 ? (completed / total) * 100 : 0;
+    document.getElementById('progress').style.width = pct + '%';
+  }
+
+  function run(tag = '') {
+    if (es) es.close();
+
+    // Reset
+    total = 0;
+    completed = 0;
+    document.getElementById('results-list').innerHTML = '';
+    document.getElementById('empty-state').style.display = 'none';
+    document.getElementById('stat-passed').textContent = '0';
+    document.getElementById('stat-failed').textContent = '0';
+    document.getElementById('stat-total').textContent = '—';
+    document.getElementById('progress').style.width = '0%';
+    document.getElementById('progress').style.background = 'linear-gradient(90deg, #6b52ae, #5b9bd5)';
+    setButtonsDisabled(true);
+    setActiveTag(tag);
+
+    const headed = document.getElementById('headed-toggle').checked;
+    const modeLabel = headed ? 'headed' : 'headless';
+    setStatus(`Starting (${modeLabel})…`, true);
+
+    const params = new URLSearchParams();
+    if (tag) params.set('tag', tag);
+    if (headed) params.set('headed', '1');
+    const url = `/api/run${params.size ? '?' + params : ''}`;
+    es = new EventSource(url);
+
+    es.onmessage = (e) => {
+      const evt = JSON.parse(e.data);
+
+      if (evt.event === 'begin') {
+        total = evt.total;
+        const headed = document.getElementById('headed-toggle').checked;
+        document.getElementById('stat-total').textContent = total;
+        setStatus(`Running ${total} test${total !== 1 ? 's' : ''} (${headed ? 'headed' : 'headless'})…`, true);
+      }
+
+      if (evt.event === 'testEnd') {
+        completed++;
+        updateProgress();
+
+        const li = document.createElement('li');
+        li.className = `result-item ${evt.status}`;
+
+        const icon = evt.status === 'passed' ? '✓' : evt.status === 'failed' ? '✘' : '○';
+        const dur = (evt.duration / 1000).toFixed(1) + 's';
+
+        li.innerHTML = `
+          <span class="result-icon">${icon}</span>
+          <div class="result-body">
+            ${evt.suite ? `<div class="result-suite">${esc(evt.suite)}</div>` : ''}
+            <div class="result-title">${esc(evt.title)}</div>
+            ${evt.error ? `<div class="result-error">${esc(evt.error)}</div>` : ''}
+          </div>
+          <span class="result-duration">${dur}</span>
+        `;
+
+        const list = document.getElementById('results-list');
+        list.appendChild(li);
+
+        const wrap = document.getElementById('results-wrap');
+        wrap.scrollTop = wrap.scrollHeight;
+
+        const passed = list.querySelectorAll('.passed').length;
+        const failed = list.querySelectorAll('.failed').length;
+        document.getElementById('stat-passed').textContent = passed;
+        document.getElementById('stat-failed').textContent = failed;
+      }
+
+      if (evt.event === 'end') {
+        es.close();
+        setButtonsDisabled(false);
+        updateProgress();
+
+        const allPassed = evt.failed === 0;
+        const msg = allPassed
+          ? `✓ All ${evt.passed} tests passed`
+          : `${evt.passed} passed · ${evt.failed} failed`;
+        setStatus(msg, false);
+        document.getElementById('progress').style.background = allPassed
+          ? 'linear-gradient(90deg, #2f855a, #48bb78)'
+          : 'linear-gradient(90deg, #2f855a, #c53030)';
+      }
+    };
+
+    es.onerror = () => {
+      es.close();
+      setButtonsDisabled(false);
+      setStatus('Connection lost — is the dev server running?', false);
+    };
+  }
+
+  function esc(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+</script>
+</body>
+</html>

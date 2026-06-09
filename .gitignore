@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.env
+.env.local
+bridge_tests/playwright-report/
+bridge_tests/test-results/
+bridge_app/tsconfig.tsbuildinfo
+.DS_Store
