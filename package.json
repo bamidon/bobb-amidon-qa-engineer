@@ -2,16 +2,16 @@
   "name": "bobb-amidon-qa-engineer",
   "version": "1.0.0",
   "scripts": {
-    "test": "npm --prefix bridge_tests run test",
-    "test:smoke": "npm --prefix bridge_tests run test:smoke",
-    "test:regression": "npm --prefix bridge_tests run test:regression",
-    "test:a11y": "npm --prefix bridge_tests run test:a11y",
-    "test:headed": "xvfb-run --auto-servernum npm --prefix bridge_tests run test:headed",
-    "test:ui": "npm --prefix bridge_tests run test:ui",
-    "test:debug": "npm --prefix bridge_tests run test:debug",
-    "test:prod": "npm --prefix bridge_tests run test:prod",
-    "test:auth": "npm --prefix bridge_tests run test:auth",
-    "report": "npm --prefix bridge_tests run report",
-    "demo": "npm --prefix bridge_tests run demo"
+    "test": "cd bridge_tests && npm run test",
+    "test:smoke": "cd bridge_tests && npm run test:smoke",
+    "test:regression": "cd bridge_tests && npm run test:regression",
+    "test:a11y": "cd bridge_tests && npm run test:a11y",
+    "test:headed": "cd bridge_tests && xvfb-run --auto-servernum npm run test:headed",
+    "test:ui": "cd bridge_tests && npm run test:ui",
+    "test:debug": "cd bridge_tests && npm run test:debug",
+    "test:prod": "cd bridge_tests && npm run test:prod",
+    "test:auth": "cd bridge_tests && npm run test:auth",
+    "report": "cd bridge_tests && npm run report",
+    "demo": "cd bridge_tests && npm run demo"
   }
 }
