@@ -5,10 +5,9 @@
     "ghcr.io/devcontainers/features/github-cli:1": {}
   },
   "postCreateCommand": "bash .devcontainer/setup.sh",
-  "forwardPorts": [5173, 4000, 8080],
+  "forwardPorts": [5173, 8080],
   "portsAttributes": {
     "5173": { "label": "Bridge App (Vite)" },
-    "4000": { "label": "Test Lab" },
     "8080": { "label": "Playwright UI" }
   },
   "customizations": {
