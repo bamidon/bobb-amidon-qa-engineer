@@ -2,7 +2,7 @@
 set -e
 
 # xvfb enables headed browser tests — non-fatal if unavailable
-sudo apt-get install -y xvfb xauth || echo "Warning: xvfb unavailable, test:headed will not work"
+sudo apt-get update && sudo apt-get install -y xvfb xauth || echo "Warning: xvfb unavailable, test:headed will not work"
 
 # Symlink bridge_app source so test imports resolve
 ln -sf ../../bridge_app bridge_tests/tests/bridge_app
