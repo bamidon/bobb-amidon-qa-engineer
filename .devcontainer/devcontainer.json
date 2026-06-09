@@ -4,7 +4,7 @@
   "features": {
     "ghcr.io/devcontainers/features/github-cli:1": {}
   },
-  "postCreateCommand": "npm install --prefix bridge_app && npm install --prefix bridge_tests && npx --prefix bridge_tests playwright install chromium --with-deps",
+  "postCreateCommand": "ln -s ../../bridge_app bridge_tests/tests/bridge_app && npm install --prefix bridge_app && npm install --prefix bridge_tests && npx --prefix bridge_tests playwright install chromium --with-deps",
   "forwardPorts": [5173, 4000],
   "portsAttributes": {
     "5173": { "label": "Bridge App (Vite)" },
